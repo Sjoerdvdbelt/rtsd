@@ -20,7 +20,7 @@ void * hello(void *t_result) {
         long nsec = t_interval.tv_nsec + 1000000;
         if (nsec > 1000000000) {
             t_interval.tv_nsec = nsec - 1000000000;
-            t_interval.tv_sec -= 1;
+            t_interval.tv_sec += 1;
         } else {
             t_interval.tv_nsec = nsec;
         }
@@ -38,14 +38,14 @@ int main() {
 
     struct timespec t_results;
     pthread_t thread_id;
-    pthread_attr_t thread_attr;
+    int prio = sched_get_priority_max(SCHED_FIFO);
+    printf("%i\n", prio);
+    struct sched_param thread_param = {.sched_priority = prio };
 
-    pthread_attr_init(&thread_attr);
-    pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_JOINABLE);
-    pthread_attr_setinheritsched(&thread_attr, PTHREAD_EXPLICIT_SCHED);
-    pthread_attr_setschedpolicy(&thread_attr, SCHED_FIFO);
-
-    pthread_create(&thread_id, &thread_attr, hello, (void*)&t_results);
+    int succes_create = pthread_create(&thread_id, NULL, hello, (void*)&t_results);
+    printf("%i\n", succes_create);
+    int succes_sched = pthread_setschedparam(thread_id, SCHED_FIFO, &thread_param);
+    printf("%i\n", succes_sched);
     
     pthread_join(thread_id,NULL);
     long delta_ns = (t_results.tv_sec * 1000000000) + t_results.tv_nsec;
