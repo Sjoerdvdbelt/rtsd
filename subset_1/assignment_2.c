@@ -20,7 +20,7 @@ void * hello(void *t_result) {
         long nsec = t_interval.tv_nsec + 1000000;
         if (nsec > 1000000000) {
             t_interval.tv_nsec = nsec - 1000000000;
-            t_interval.tv_sec -= 1;
+            t_interval.tv_sec += 1;
         } else {
             t_interval.tv_nsec = nsec;
         }
