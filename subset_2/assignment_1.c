@@ -30,7 +30,15 @@ int main() {
 
     struct timespec t_results;
     pthread_t thread_id;
-    pthread_create(&thread_id, NULL, hello, (void*)&t_results);
+    pthread_attr_t thread_attr;
+
+    pthread_attr_init(&thread_attr);
+    pthread_attr_setdetachstate(&thread_attr, PTHREAD_CREATE_JOINABLE);
+    pthread_attr_setinheritsched(&thread_attr, PTHREAD_EXPLICIT_SCHED);
+    pthread_attr_setschedpolicy(&thread_attr, SCHED_FIFO);
+
+    pthread_create(&thread_id, &thread_attr, hello, (void*)&t_results);
+
     pthread_join(thread_id,NULL);
     long delta_ns = (t_results.tv_sec * 1000000000) + t_results.tv_nsec;
 
