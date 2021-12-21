@@ -36,15 +36,16 @@ int main() {
     struct itimerspec itime;
     timer_t timer_id;
 
-    event.sigev_notify = SIGEV_SIGNAL;
-    event.sigev_signo = SIGALRM;
+    // event.sigev_notify = SIGEV_THREAD_ID;
+    // event.sigev_signo = SIGALRM;
 
     sigset_t set; 
     sigemptyset(&set); 
     sigaddset(&set, SIGALRM);
     pthread_sigmask(SIG_BLOCK, &set, NULL); 
 
-    timer_create(CLOCK_REALTIME, &event, &timer_id);
+    // timer_create(CLOCK_REALTIME, &event, &timer_id);
+    timer_create(CLOCK_REALTIME, NULL, &timer_id); // event is NULL: the current Cobalt thread will receive the notifications with signal SIGALRM
 
     itime.it_value.tv_sec = 0;
     itime.it_value.tv_nsec = 1000000; 
